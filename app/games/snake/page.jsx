@@ -30,6 +30,19 @@ function dirFromCode(code, controls, player) {
   return null;
 }
 
+function getDir(code, controls, playerCount, playerIndex) {
+  const d = dirFromCode(code, controls, `p${playerIndex + 1}`);
+  if (d) return d;
+  // In single-player mode, also allow arrow keys for player 1
+  if (playerCount === 1 && playerIndex === 0) {
+    if (code === 'ArrowUp')    return [0,-1];
+    if (code === 'ArrowDown')  return [0,1];
+    if (code === 'ArrowLeft')  return [-1,0];
+    if (code === 'ArrowRight') return [1,0];
+  }
+  return null;
+}
+
 const ALL_SNAKES = () => [
   { body: [[4,14],[3,14],[2,14]], dir: [1,0], alive: true, score: 0 },
   { body: [[23,14],[24,14],[25,14]], dir: [-1,0], alive: true, score: 0 },
@@ -51,7 +64,7 @@ export default function SnakePage() {
   const [paused, setPaused]   = useState(false);
 
   const initState = useCallback((n) => {
-    const snakes = ALL_SNAKES().map((s, i) => ({ ...s, isAI: i >= n }));
+    const snakes = ALL_SNAKES().slice(0, n).map((s) => ({ ...s, isAI: false }));
     return { snakes, food: [14,14], tick: 0, running: true, paused: false };
   }, []);
 
@@ -131,12 +144,11 @@ export default function SnakePage() {
 
     setScores(s.snakes.map(sn => sn.score));
     const alive = s.snakes.filter(sn => sn.alive);
-    const humanAlive = s.snakes.filter((sn,i) => sn.alive && !sn.isAI);
-    if (alive.length <= 1 || humanAlive.length === 0) {
+    if (alive.length === 0) {
       s.running = false;
       setStatus('gameover');
-      recordGame(humanAlive.length > 0 && humanAlive[0].score > 0);
       const maxScore = Math.max(...s.snakes.map(sn => sn.score));
+      recordGame(maxScore > 0);
       saveScore('snake', { name: 'Player', score: maxScore });
     }
     draw();
@@ -169,14 +181,13 @@ export default function SnakePage() {
   useEffect(() => {
     const onKey = (e) => {
       if (!stateRef.current?.running) return;
-      ['p1','p2','p3'].forEach((p, i) => {
-        const d = dirFromCode(e.code, controls, p);
+      const count = stateRef.current?.snakes?.length || 1;
+      stateRef.current?.snakes?.forEach((snake, i) => {
+        if (!snake.alive || snake.isAI) return;
+        const d = getDir(e.code, controls, count, i);
         if (d) {
-          const snake = stateRef.current?.snakes[i];
-          if (snake && snake.alive && !snake.isAI) {
-            if (d[0] !== -snake.dir[0] || d[1] !== -snake.dir[1])
-              snake.pendingDir = d;
-          }
+          if (d[0] !== -snake.dir[0] || d[1] !== -snake.dir[1])
+            snake.pendingDir = d;
         }
       });
       if (e.code === 'KeyP' || e.code === 'Escape') togglePause();
@@ -200,15 +211,21 @@ export default function SnakePage() {
               <div className="flex flex-col items-center gap-5 p-8">
                 <div className="text-5xl">🐍</div>
                 <h2 className="text-2xl font-bold">Snake</h2>
-                <p className="text-sm text-[#555]">WASD / Arrow Keys / IJKL</p>
-                <div className="flex flex-col gap-2 w-48">
-                  {PLAYER_LABELS.map((label, i) => (
-                    <button key={i} onClick={() => { setPC(i+1); startGame(i+1); }}
-                      className="py-2.5 rounded-xl bg-white/10 border border-white/10 text-sm hover:bg-white hover:text-black font-medium transition-all">
-                      {label}
+                <button onClick={() => { setPC(1); startGame(1); }}
+                  className="w-56 py-3.5 rounded-xl bg-white text-black font-bold hover:bg-white/90 transition-all active:scale-95">
+                  Play Game
+                </button>
+                <div className="flex gap-2 w-56">
+                  {[2,3].map((n) => (
+                    <button key={n} onClick={() => { setPC(n); startGame(n); }}
+                      className="flex-1 py-2 rounded-xl bg-white/10 border border-white/10 text-sm hover:bg-white hover:text-black font-medium transition-all">
+                      {n} Players
                     </button>
                   ))}
                 </div>
+                <p className="text-xs text-[#555]">
+                  1P: WASD or Arrow Keys · 2P: WASD + Arrows · 3P: WASD + Arrows + IJKL
+                </p>
               </div>
             </div>
           )}
