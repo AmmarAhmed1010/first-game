@@ -2,8 +2,6 @@
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { useGame } from '@/context/GameContext';
-import { useAuth } from '@/context/AuthContext';
-import { saveScore } from '@/lib/storage';
 import { ArrowLeft, Heart, Volume2, VolumeX, RotateCcw, Pause, Play } from 'lucide-react';
 
 export default function GameWrapper({
@@ -13,7 +11,6 @@ export default function GameWrapper({
   extraControls,
 }) {
   const { trackPlay, toggleFavorite, isFavorite } = useGame();
-  const { recordGame } = useAuth();
   const [sound, setSound] = useState(true);
   const [fav, setFav] = useState(false);
 
