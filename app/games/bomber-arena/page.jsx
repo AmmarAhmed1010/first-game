@@ -42,7 +42,6 @@ export default function BomberArenaPage(){
   const {controls}=useControls();
   const canvasRef=useRef(null);
   const stateRef=useRef(null);
-  const rafRef=useRef(null);
   const tickRef=useRef(null);
   const keysRef=useRef({});
   const [status,setStatus]=useState('menu');
@@ -226,7 +225,7 @@ export default function BomberArenaPage(){
     const onUp=(e)=>{delete keysRef.current[e.code];};
     window.addEventListener('keydown',onDown);
     window.addEventListener('keyup',onUp);
-    return()=>{window.removeEventListener('keydown',onDown);window.removeEventListener('keyup',onUp);cancelAnimationFrame(rafRef.current);clearInterval(tickRef.current);};
+    return()=>{window.removeEventListener('keydown',onDown);window.removeEventListener('keyup',onUp);clearInterval(tickRef.current);};
   },[togglePause]);
 
   useEffect(()=>{draw();},[draw]);

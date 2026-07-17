@@ -12,18 +12,14 @@ export default function GameWrapper({
 }) {
   const { trackPlay, toggleFavorite, isFavorite } = useGame();
   const [sound, setSound] = useState(true);
-  const [fav, setFav] = useState(false);
+  const fav = isFavorite(gameId);
 
   useEffect(() => {
-    if (gameId) {
-      trackPlay(gameId);
-      setFav(isFavorite(gameId));
-    }
-  }, [gameId]);
+    if (gameId) trackPlay(gameId);
+  }, [gameId, trackPlay]);
 
   const handleFav = () => {
     toggleFavorite(gameId);
-    setFav(f => !f);
   };
 
   return (
