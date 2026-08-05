@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
-import { Eye, EyeOff, Gamepad2, Loader2, Zap } from 'lucide-react';
+import { Eye, EyeOff, Gamepad2, Loader2, Zap ,Lightning } from 'lucide-react';
 
 export default function LoginPage() {
   const router   = useRouter();
