@@ -17,7 +17,6 @@ export default function LoginPage() {
 
   useEffect(() => { if (user) router.replace('/dashboard'); }, [user, router]);
   useEffect(() => { emailRef.current?.focus(); }, []);
-//changesafdsafdsafadsfsdafdsa
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!email.trim())    { triggerError('Email is required.');    return; }
