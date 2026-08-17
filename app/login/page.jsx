@@ -4,7 +4,6 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import { Eye, EyeOff, Gamepad2, Loader2, Zap ,Lightning } from 'lucide-react';
 export default function LoginPage() {
-  //dfadsfdasfdas
   const router   = useRouter();
   const { user, login } = useAuth();
   const [email, setEmail]       = useState('');
@@ -18,7 +17,6 @@ export default function LoginPage() {
 
   useEffect(() => { if (user) router.replace('/dashboard'); }, [user, router]);
   useEffect(() => { emailRef.current?.focus(); }, []);
-//changesafdsafdsafadsfsdafdsa
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!email.trim())    { triggerError('Email is required.');    return; }
