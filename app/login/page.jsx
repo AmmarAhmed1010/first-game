@@ -14,7 +14,6 @@ export default function LoginPage() {
   const [loading, setLoading]   = useState(false);
   const [shake, setShake]       = useState(false);
   const emailRef = useRef(null);
-//fdsafdafdas
   useEffect(() => { if (user) router.replace('/dashboard'); }, [user, router]);
   useEffect(() => { emailRef.current?.focus(); }, []);
   const handleSubmit = async (e) => {
